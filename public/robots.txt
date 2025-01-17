@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Sitemap: https://travelpro.com/sitemap.xml
+
+# Allow all bots to access these directories
+Allow: /solutions/
+Allow: /company/
+Allow: /resources/
+Allow: /legal/
+
+# Prevent crawling of certain paths
+Disallow: /api/
+Disallow: /_next/
+Disallow: /*?*
+
+# Crawl delays to prevent server overload
+Crawl-delay: 10
