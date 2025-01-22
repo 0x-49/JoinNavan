@@ -99,39 +99,89 @@ export default function TravelManagement() {
         {/* Features Grid */}
         <section className="py-16 px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">Everything You Need for Efficient Travel Management</h2>
+            <h2 className="text-3xl font-bold text-center mb-6">Everything You Need for Efficient Travel Management</h2>
+            <p className="text-lg text-muted-foreground text-center max-w-3xl mx-auto mb-12">
+              Our comprehensive travel management platform combines cutting-edge technology with human expertise to deliver a seamless business travel experience. From booking to reporting, we've got you covered.
+            </p>
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
-                  title: "Global Inventory",
-                  description: "Access an extensive selection of flights, hotels, trains, and car rentals worldwide."
+                  title: "Global Inventory Access",
+                  description: "Access the world's largest selection of flights, hotels, trains, and car rentals. Get exclusive corporate rates and real-time availability across all major travel providers.",
+                  features: [
+                    "Direct connections with suppliers",
+                    "Negotiated corporate rates",
+                    "Last-minute availability",
+                    "Loyalty program integration"
+                  ]
                 },
                 {
-                  title: "Smart Booking Tools",
-                  description: "AI-powered recommendations and one-click booking for faster reservations."
+                  title: "AI-Powered Smart Booking",
+                  description: "Our intelligent booking system learns from your preferences and company policies to deliver personalized recommendations and streamline the booking process.",
+                  features: [
+                    "One-click booking",
+                    "Personalized recommendations",
+                    "Price prediction",
+                    "Alternative options"
+                  ]
                 },
                 {
-                  title: "Policy Automation",
-                  description: "Set and enforce travel policies automatically during the booking process."
+                  title: "Automated Policy Compliance",
+                  description: "Set comprehensive travel policies that automatically enforce your company's guidelines while maintaining flexibility for your travelers.",
+                  features: [
+                    "Dynamic policy rules",
+                    "Pre-trip approvals",
+                    "Budget controls",
+                    "Exception handling"
+                  ]
                 },
                 {
-                  title: "24/7 Travel Support",
-                  description: "Expert travel agents available around the clock to assist your travelers."
+                  title: "24/7 Global Travel Support",
+                  description: "Expert travel agents available worldwide, around the clock, to assist your travelers with any needs or changes to their itinerary.",
+                  features: [
+                    "Multilingual support",
+                    "Emergency assistance",
+                    "Itinerary modifications",
+                    "Local expertise"
+                  ]
                 },
                 {
-                  title: "Real-time Reporting",
-                  description: "Get instant visibility into travel spend, patterns, and policy compliance."
+                  title: "Advanced Analytics & Reporting",
+                  description: "Comprehensive reporting suite providing real-time insights into travel spend, patterns, and compliance across your organization.",
+                  features: [
+                    "Custom dashboards",
+                    "Spend analytics",
+                    "Compliance tracking",
+                    "Sustainability metrics"
+                  ]
                 },
                 {
-                  title: "Duty of Care",
-                  description: "Keep track of your travelers and provide assistance when needed."
+                  title: "Enhanced Duty of Care",
+                  description: "Keep your travelers safe with real-time tracking, risk alerts, and comprehensive emergency support worldwide.",
+                  features: [
+                    "Traveler tracking",
+                    "Risk assessment",
+                    "Emergency alerts",
+                    "Safety protocols"
+                  ]
                 }
               ].map((feature, index) => (
-                <Card key={index}>
+                <Card key={index} className="flex flex-col">
                   <CardHeader>
-                    <CardTitle>{feature.title}</CardTitle>
-                    <CardDescription>{feature.description}</CardDescription>
+                    <CardTitle className="text-xl text-primary">{feature.title}</CardTitle>
+                    <CardDescription className="text-sm mt-2">{feature.description}</CardDescription>
                   </CardHeader>
+                  <CardContent>
+                    <h3 className="text-sm font-semibold mb-2">Key Features:</h3>
+                    <ul className="space-y-2">
+                      {feature.features.map((item, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm">
+                          <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
                 </Card>
               ))}
             </div>
@@ -141,19 +191,50 @@ export default function TravelManagement() {
         {/* Benefits Section */}
         <section className="py-16 px-4 md:px-6 lg:px-8 bg-secondary/10">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">Why Choose TravelPro</h2>
+            <h2 className="text-3xl font-bold text-center mb-6">Why Choose TravelPro for Corporate Travel Management</h2>
+            <p className="text-lg text-muted-foreground text-center max-w-3xl mx-auto mb-12">
+              Join thousands of companies worldwide who trust TravelPro to optimize their business travel programs and drive significant cost savings while improving the traveler experience.
+            </p>
             <div className="grid md:grid-cols-2 gap-8">
               {[
-                "Save up to 15% on travel spend",
-                "Reduce booking time by 80%",
-                "Increase policy compliance to 95%",
-                "Access to exclusive corporate rates",
-                "Real-time spend visibility",
-                "Seamless expense integration"
+                {
+                  title: "Proven Cost Savings",
+                  description: "Save up to 15% on travel spend through negotiated rates, smart booking tools, and policy automation",
+                  metrics: "Average customer savings of $250,000 annually"
+                },
+                {
+                  title: "Increased Efficiency",
+                  description: "Reduce booking time by 80% with our streamlined platform and AI-powered recommendations",
+                  metrics: "Save 5-10 hours per week on travel management tasks"
+                },
+                {
+                  title: "Enhanced Compliance",
+                  description: "Increase policy compliance to 95% through automated enforcement and clear guidelines",
+                  metrics: "Reduce out-of-policy bookings by 75%"
+                },
+                {
+                  title: "Exclusive Rates",
+                  description: "Access to exclusive corporate rates across our global network of travel providers",
+                  metrics: "Up to 30% off standard booking rates"
+                },
+                {
+                  title: "Real-Time Visibility",
+                  description: "Gain complete visibility into travel spend with real-time reporting and analytics",
+                  metrics: "Track 100% of travel expenses in real-time"
+                },
+                {
+                  title: "Seamless Integration",
+                  description: "Integrate travel and expense management for end-to-end process automation",
+                  metrics: "Reduce reconciliation time by 90%"
+                }
               ].map((benefit, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <CheckCircle className="text-primary h-5 w-5" />
-                  <span className="text-lg">{benefit}</span>
+                <div key={index} className="bg-background rounded-lg p-6 shadow-sm">
+                  <div className="flex items-center gap-3 mb-3">
+                    <CheckCircle className="text-primary h-6 w-6" />
+                    <h3 className="text-xl font-semibold">{benefit.title}</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-2">{benefit.description}</p>
+                  <p className="text-sm font-medium text-primary">{benefit.metrics}</p>
                 </div>
               ))}
             </div>
