@@ -1,0 +1,128 @@
+---
+import '../styles/hero.css';
+import BackgroundGradientAnimation from '../components/ui/BackgroundGradientAnimation.astro';
+import MagneticButton from '../components/ui/MagneticButton.astro';
+import Header from './Header.astro';
+---
+
+<div class="relative bg-gradient-to-b from-gray-900 to-blue-900 overflow-hidden">
+  <Header />
+  
+  <!-- Hero Background Animation -->
+  <div class="absolute inset-0 overflow-hidden">
+    <BackgroundGradientAnimation />
+  </div>
+  
+  <!-- Hero Content -->
+  <section 
+    aria-labelledby="hero-heading"
+    class="relative pt-20 pb-32 flex items-center min-h-screen"
+  >
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-4xl mx-auto">
+        <h1 
+          id="hero-heading"
+          class="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight tracking-tight"
+        >
+          Business Travel & Expense Management.
+          <span class="text-blue-400">Solved by Navan.</span>
+        </h1>
+        
+        <p class="text-xl text-gray-200 mb-8 leading-relaxed max-w-3xl mx-auto">
+          From team offsites to deal-closing dinners, give employees the freedom to achieve business goals while you control spend. 
+          <strong class="text-blue-300">Save up to 30% on travel costs.</strong>
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <MagneticButton>
+            <a
+              href="https://get.navan.com/vw1oxv5xgmri"
+              class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-blue-900 bg-white rounded-lg hover:bg-blue-50 transition-colors duration-200"
+              data-analytics="hero-get-started"
+            >
+              Get Started Free
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </a>
+          </MagneticButton>
+          
+          <MagneticButton>
+            <a
+              href="https://get.navan.com/vw1oxv5xgmri"
+              class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white border-2 border-white rounded-lg hover:bg-white hover:text-blue-900 transition-colors duration-200"
+              data-analytics="hero-request-demo"
+            >
+              Request Demo
+            </a>
+          </MagneticButton>
+        </div>
+        
+        <!-- Social Proof Metrics -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mt-12 pt-8 border-t border-gray-700">
+          <div class="p-4 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div class="text-3xl font-bold text-white mb-1">30%</div>
+            <div class="text-sm text-gray-300">Average Cost Savings</div>
+          </div>
+          <div class="p-4 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div class="text-3xl font-bold text-white mb-1">10k+</div>
+            <div class="text-sm text-gray-300">Companies Trust Us</div>
+          </div>
+          <div class="p-4 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div class="text-3xl font-bold text-white mb-1">92%</div>
+            <div class="text-sm text-gray-300">Policy Compliance</div>
+          </div>
+          <div class="p-4 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div class="text-3xl font-bold text-white mb-1">24/7</div>
+            <div class="text-sm text-gray-300">Global Support</div>
+          </div>
+        </div>
+        
+        <!-- Trust Badges -->
+        <div class="mt-12 pt-8 border-t border-gray-700">
+          <p class="text-sm text-gray-400 mb-4">Trusted by 10,000+ companies worldwide</p>
+          <div class="flex flex-wrap justify-center gap-8 items-center">
+            <img 
+              src="https://landing-page-images-seo.s3.eu-north-1.amazonaws.com/forbes-logo.png" 
+              alt="Forbes" 
+              class="h-8 opacity-75 hover:opacity-100 transition-opacity"
+              loading="lazy"
+            />
+            <img 
+              src="https://landing-page-images-seo.s3.eu-north-1.amazonaws.com/TC_Logo.png" 
+              alt="TechCrunch" 
+              class="h-8 opacity-75 hover:opacity-100 transition-opacity"
+              loading="lazy"
+            />
+            <img 
+              src="https://landing-page-images-seo.s3.eu-north-1.amazonaws.com/WSJ_Logo.png" 
+              alt="Wall Street Journal" 
+              class="h-8 opacity-75 hover:opacity-100 transition-opacity"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  .hero-bg-animation {
+    @apply absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600;
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+</style>

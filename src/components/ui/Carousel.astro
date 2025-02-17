@@ -1,0 +1,106 @@
+---
+interface Props {
+  id: string;
+  className?: string;
+}
+
+const { id, className = "" } = Astro.props;
+---
+
+<div class={`carousel-container overflow-hidden relative ${className}`}>
+  <div id={id} class="carousel-track flex transition-transform duration-500 ease-out">
+    <slot />
+  </div>
+  <button class="carousel-button prev absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+  <button class="carousel-button next absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+</div>
+
+<script define:vars={{ id }}>
+  class Carousel {
+    constructor(id) {
+      this.track = document.getElementById(id);
+      this.container = this.track.parentElement;
+      this.slides = Array.from(this.track.children);
+      this.currentIndex = 0;
+      
+      this.container.querySelector('.prev').addEventListener('click', () => this.prev());
+      this.container.querySelector('.next').addEventListener('click', () => this.next());
+      
+      // Clone slides for infinite effect
+      this.slides.forEach(slide => {
+        const clone = slide.cloneNode(true);
+        this.track.appendChild(clone);
+      });
+      
+      this.updateSlidePositions();
+      
+      // Optional: Auto-advance
+      setInterval(() => this.next(), 5000);
+    }
+    
+    updateSlidePositions() {
+      const slideWidth = this.slides[0].offsetWidth;
+      this.track.style.transform = `translateX(-${this.currentIndex * slideWidth}px)`;
+    }
+    
+    next() {
+      this.currentIndex++;
+      if (this.currentIndex >= this.slides.length) {
+        this.currentIndex = 0;
+        this.track.style.transition = 'none';
+        this.updateSlidePositions();
+        setTimeout(() => {
+          this.track.style.transition = 'transform 500ms ease-out';
+        }, 10);
+      } else {
+        this.updateSlidePositions();
+      }
+    }
+    
+    prev() {
+      this.currentIndex--;
+      if (this.currentIndex < 0) {
+        this.currentIndex = this.slides.length - 1;
+        this.track.style.transition = 'none';
+        this.updateSlidePositions();
+        setTimeout(() => {
+          this.track.style.transition = 'transform 500ms ease-out';
+        }, 10);
+      } else {
+        this.updateSlidePositions();
+      }
+    }
+  }
+  
+  // Initialize carousel
+  new Carousel(id);
+</script>
+
+<style>
+  .carousel-container {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent
+    );
+  }
+  
+  .carousel-button {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .carousel-container:hover .carousel-button {
+    opacity: 1;
+  }
+</style>

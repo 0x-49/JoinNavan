@@ -1,11 +1,53 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Benefits from '../components/Benefits.astro';
+import Features from '../components/Features.astro';
+import FeatureComparison from '../components/FeatureComparison.astro';
+import ROICalculator from '../components/ROICalculator.astro';
+import Integrations from '../components/Integrations.astro';
+import CTA from '../components/CTA.astro';
+import Footer from '../components/Footer.astro';
+
+const pageTitle = "Business Travel & Expense Management Platform";
+const pageDescription = "Transform your business travel with Navan's all-in-one platform. Streamline bookings, automate expense reports, and save up to 30% on travel costs. Trusted by 10,000+ companies globally.";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  ogImage="/images/navan-homepage-og.png"
+>
+  <main id="main-content" class="flex flex-col min-h-screen">
+    <Hero />
+    
+    <article class="features-benefits-section">
+      <Benefits />
+      <Features />
+      <FeatureComparison />
+    </article>
+    
+    <article class="conversion-section">
+      <ROICalculator />
+    </article>
+    
+    <section class="social-proof-section">
+      <Integrations />
+    </section>
+    
+    <CTA />
+  </main>
+  
+  <Footer />
 </Layout>
+
+<style>
+  .features-benefits-section,
+  .conversion-section,
+  .social-proof-section {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+</style>

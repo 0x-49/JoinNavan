@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="100" height="100" fill="url(#paint0_pattern_1_592)"/>
+<defs>
+<pattern id="paint0_pattern_1_592" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0_1_592" transform="scale(0.01)"/>
+</pattern>
+<image id="image0_1_592" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAACPgHTiAAAAM0lEQVR42u3BAQEAAACCIP+vbkhAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgEgAAQ3KSp/QAAAAASUVORK5CYII="/>
+</defs>
+</svg>

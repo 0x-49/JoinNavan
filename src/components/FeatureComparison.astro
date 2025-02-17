@@ -1,0 +1,83 @@
+---
+import FeatureComparisonUI from './ui/FeatureComparison.astro';
+
+const features = [
+  {
+    name: 'Travel Booking',
+    description: 'Book flights, hotels, and transportation with ease',
+    basic: true,
+    basicDescription: 'Basic booking capabilities',
+    professional: true,
+    professionalDescription: 'Advanced booking with priority support',
+    enterprise: true,
+    enterpriseDescription: 'Advanced global booking capabilities with VIP service'
+  },
+  {
+    name: 'Expense Management',
+    description: 'Track and manage business expenses efficiently',
+    basic: true,
+    basicDescription: 'Basic expense tracking',
+    professional: true,
+    professionalDescription: 'Complete expense lifecycle management',
+    enterprise: true,
+    enterpriseDescription: 'Customizable workflows & audit logs'
+  },
+  {
+    name: 'Policy Compliance',
+    description: 'Ensure travel and expense policy compliance',
+    basic: false,
+    professional: true,
+    professionalDescription: 'AI-driven policy guardrails',
+    enterprise: true,
+    enterpriseDescription: 'Enterprise-grade policy customization'
+  },
+  {
+    name: 'Reporting & Analytics',
+    description: 'Gain insights into travel and expense data',
+    basic: false,
+    basicDescription: 'Limited Reporting',
+    professional: true,
+    professionalDescription: 'Advanced reporting capabilities',
+    enterprise: true,
+    enterpriseDescription: 'Advanced analytics & custom reports'
+  },
+  {
+    name: 'Mobile App',
+    description: 'Access your account on the go',
+    basic: true,
+    basicDescription: 'Basic mobile access',
+    professional: true,
+    professionalDescription: 'Full mobile functionality',
+    enterprise: true,
+    enterpriseDescription: 'Enhanced mobile features & admin controls'
+  },
+  {
+    name: 'Customer Support',
+    description: '24/7 support for your team',
+    basic: false,
+    basicDescription: 'Email Support Only',
+    professional: true,
+    professionalDescription: '24/7 Priority Support',
+    enterprise: true,
+    enterpriseDescription: 'Dedicated Account Manager & Premium Support'
+  },
+  {
+    name: 'Custom Integrations',
+    description: 'Connect with your existing tools',
+    basic: false,
+    professional: false,
+    enterprise: true,
+    enterpriseDescription: 'Full API Access & Custom Integrations'
+  },
+  {
+    name: 'Dedicated Account Manager',
+    description: 'Personal support for your organization',
+    basic: false,
+    professional: false,
+    enterprise: true,
+    enterpriseDescription: 'Personalized Support & Strategic Guidance'
+  }
+];
+---
+
+<FeatureComparisonUI features={features} />

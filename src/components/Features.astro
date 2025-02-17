@@ -1,0 +1,148 @@
+---
+import Card from './ui/Card.astro';
+
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+  benefits: string[];
+}
+
+const features: Feature[] = [
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 2L11 13"></path>
+      <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+    </svg>`,
+    title: "Global Flight Booking",
+    description: "Access the world's largest inventory of flights with real-time pricing and availability.",
+    benefits: [
+      "AI-powered best fare search",
+      "Corporate policy compliance",
+      "24/7 travel support",
+      "Automated expense reporting"
+    ]
+  },
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 20h20"></path>
+      <path d="M5 20v-4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"></path>
+      <path d="M12 4v6"></path>
+      <path d="M9 8h6"></path>
+      <path d="M8 4h8"></path>
+    </svg>`,
+    title: "Smart Hotel Solutions",
+    description: "Find and book the perfect accommodations with our curated selection of hotels worldwide.",
+    benefits: [
+      "Negotiated corporate rates",
+      "Virtual payment solutions",
+      "Room block management",
+      "Duty of care compliance"
+    ]
+  },
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+      <path d="M9 12h6"></path>
+      <path d="M12 9v6"></path>
+    </svg>`,
+    title: "Rail & Ground Transport",
+    description: "Seamlessly book trains and local transportation for complete journey management.",
+    benefits: [
+      "Global rail coverage",
+      "Mobile tickets",
+      "Schedule alerts",
+      "Carbon footprint tracking"
+    ]
+  },
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+      <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+      <path d="M5 17h-2v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6"></path>
+      <path d="M6 9h11"></path>
+    </svg>`,
+    title: "Car Rental Management",
+    description: "Book vehicles globally with our extensive network of car rental partners.",
+    benefits: [
+      "Corporate discount rates",
+      "Insurance included",
+      "Flexible cancellation",
+      "Direct billing options"
+    ]
+  }
+];
+---
+
+<section id="features" class="py-24 bg-gradient-to-b from-gray-50 to-white">
+  <div class="container mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="text-4xl font-bold mb-6">Comprehensive Travel Solutions</h2>
+      <p class="text-xl text-gray-600">Everything you need to manage business travel in one powerful platform.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {features.map(({ icon, title, description, benefits }) => (
+        <Card>
+          <div class="h-full flex flex-col">
+            <div class="text-blue-600 mb-4" set:html={icon} />
+            <h3 class="text-xl font-semibold mb-3">{title}</h3>
+            <p class="text-gray-600 mb-6">{description}</p>
+            <ul class="mt-auto space-y-2">
+              {benefits.map(benefit => (
+                <li class="flex items-center text-gray-600">
+                  <svg class="w-4 h-4 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                  {benefit}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Card>
+      ))}
+    </div>
+    
+    <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+      <a
+        href="https://get.navan.com/vw1oxv5xgmrig"
+        class="inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+        data-analytics="features-see-pricing"
+      >
+        See Our Pricing
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </a>
+      
+      <a
+        href="#roi-calculator"
+        class="inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-blue-600 bg-white border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+        data-analytics="features-calculate-savings"
+      >
+        Calculate Your Savings
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .card {
+    transition: all 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+  }
+  
+  svg {
+    transition: transform 0.2s ease;
+  }
+  
+  .card:hover svg {
+    transform: scale(1.1);
+  }
+</style>

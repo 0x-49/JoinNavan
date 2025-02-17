@@ -1,0 +1,2755 @@
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\node_modules\@astrojs\prism\Prism.astro
+================================================================================
+
+---
+import { runHighlighterWithAstro } from './dist/highlighter';
+
+interface Props {
+	class?: string;
+	lang?: string;
+	code: string;
+}
+
+const { class: className, lang, code } = Astro.props as Props;
+const { classLanguage, html } = runHighlighterWithAstro(lang, code);
+---
+
+<pre
+	class={[className, classLanguage]
+		.filter(Boolean)
+		.join(' ')}><code class={classLanguage} set:html={html} /></pre>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\node_modules\astro\components\ClientRouter.astro
+================================================================================
+
+---
+type Fallback = 'none' | 'animate' | 'swap';
+
+export interface Props {
+	fallback?: Fallback;
+	/** @deprecated handleForms is enabled by default in Astro 4.0
+	 *
+	 * Set `data-astro-reload` on your form to opt-out of the default behavior.
+	 */
+	handleForms?: boolean;
+}
+
+const { fallback = 'animate' } = Astro.props;
+---
+
+<style is:global>
+	/* Route announcer */
+	.astro-route-announcer {
+		position: absolute;
+		left: 0;
+		top: 0;
+		clip: rect(0 0 0 0);
+		clip-path: inset(50%);
+		overflow: hidden;
+		white-space: nowrap;
+		width: 1px;
+		height: 1px;
+	}
+</style>
+<meta name="astro-view-transitions-enabled" content="true" />
+<meta name="astro-view-transitions-fallback" content={fallback} />
+<script>
+	import type { Options } from 'astro:transitions/client';
+	import { supportsViewTransitions, navigate } from 'astro:transitions/client';
+	// NOTE: import from `astro/virtual-modules/prefetch.js` as `astro:prefetch` requires the `prefetch` config to be enabled
+	// @ts-ignore
+	import { init } from 'astro/virtual-modules/prefetch.js';
+
+	type Fallback = 'none' | 'animate' | 'swap';
+
+	function getFallback(): Fallback {
+		const el = document.querySelector('[name="astro-view-transitions-fallback"]');
+		if (el) {
+			return el.getAttribute('content') as Fallback;
+		}
+		return 'animate';
+	}
+
+	function isReloadEl(el: HTMLElement | SVGAElement): boolean {
+		return el.dataset.astroReload !== undefined;
+	}
+
+	if (supportsViewTransitions || getFallback() !== 'none') {
+		if (import.meta.env.DEV && window.matchMedia('(prefers-reduced-motion)').matches) {
+			console.warn(
+				`[transitions]: all view transition animations, including fallback animation, are disabled as this device has the prefer-reduced-motion setting enabled.`,
+			);
+		}
+		document.addEventListener('click', (ev) => {
+			let link = ev.target;
+			if (ev.composed) {
+				link = ev.composedPath()[0];
+			}
+			if (link instanceof Element) {
+				link = link.closest('a, area');
+			}
+			if (
+				!(link instanceof HTMLAnchorElement) &&
+				!(link instanceof SVGAElement) &&
+				!(link instanceof HTMLAreaElement)
+			)
+				return;
+			// This check verifies that the click is happening on an anchor
+			// that is going to another page within the same origin. Basically it determines
+			// same-origin navigation, but omits special key combos for new tabs, etc.
+			const linkTarget = link instanceof HTMLElement ? link.target : link.target.baseVal;
+			const href = link instanceof HTMLElement ? link.href : link.href.baseVal;
+			const origin = new URL(href, location.href).origin;
+			if (
+				isReloadEl(link) ||
+				link.hasAttribute('download') ||
+				!link.href ||
+				(linkTarget && linkTarget !== '_self') ||
+				origin !== location.origin ||
+				ev.button !== 0 || // left clicks only
+				ev.metaKey || // new tab (mac)
+				ev.ctrlKey || // new tab (windows)
+				ev.altKey || // download
+				ev.shiftKey || // new window
+				ev.defaultPrevented
+			) {
+				// No page transitions in these cases,
+				// Let the browser standard action handle this
+				return;
+			}
+			ev.preventDefault();
+			navigate(href, {
+				history: link.dataset.astroHistory === 'replace' ? 'replace' : 'auto',
+				sourceElement: link,
+			});
+		});
+
+		document.addEventListener('submit', (ev) => {
+			let el = ev.target as HTMLElement;
+			if (el.tagName !== 'FORM' || ev.defaultPrevented || isReloadEl(el)) {
+				return;
+			}
+			const form = el as HTMLFormElement;
+			const submitter = ev.submitter;
+			const formData = new FormData(form, submitter);
+			// form.action and form.method can point to an <input name="action"> or <input name="method">
+			// in which case should fallback to the form attribute
+			const formAction =
+				typeof form.action === 'string' ? form.action : form.getAttribute('action');
+			const formMethod =
+				typeof form.method === 'string' ? form.method : form.getAttribute('method');
+			// Use the form action, if defined, otherwise fallback to current path.
+			let action = submitter?.getAttribute('formaction') ?? formAction ?? location.pathname;
+			// Use the form method, if defined, otherwise fallback to "get"
+			const method = submitter?.getAttribute('formmethod') ?? formMethod ?? 'get';
+
+			// the "dialog" method is a special keyword used within <dialog> elements
+			// https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#attr-fs-method
+			if (method === 'dialog' || location.origin !== new URL(action, location.href).origin) {
+				// No page transitions in these cases,
+				// Let the browser standard action handle this
+				return;
+			}
+
+			const options: Options = { sourceElement: submitter ?? form };
+			if (method === 'get') {
+				const params = new URLSearchParams(formData as any);
+				const url = new URL(action);
+				url.search = params.toString();
+				action = url.toString();
+			} else {
+				options.formData = formData;
+			}
+
+			ev.preventDefault();
+			navigate(action, options);
+		});
+
+		// @ts-expect-error injected by vite-plugin-transitions for treeshaking
+		if (!__PREFETCH_DISABLED__) {
+			init({ prefetchAll: true });
+		}
+	}
+</script>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\node_modules\astro\components\Code.astro
+================================================================================
+
+---
+import type { ThemePresets } from '@astrojs/markdown-remark';
+import type {
+	BuiltinLanguage,
+	LanguageRegistration,
+	ShikiTransformer,
+	SpecialLanguage,
+	ThemeRegistration,
+	ThemeRegistrationRaw,
+} from 'shiki';
+import { bundledLanguages } from 'shiki/langs';
+import { getCachedHighlighter } from '../dist/core/shiki.js';
+import type { HTMLAttributes } from '../types';
+
+interface Props extends Omit<HTMLAttributes<'pre'>, 'lang'> {
+	/** The code to highlight. Required. */
+	code: string;
+	/**
+	 * The language of your code.
+	 * Supports all languages listed here: https://shiki.style/languages
+	 * Instructions for loading a custom language: https://shiki.style/guide/load-lang
+	 *
+	 * @default "plaintext"
+	 */
+	lang?: BuiltinLanguage | SpecialLanguage | LanguageRegistration;
+	/**
+	 * A metastring to pass to the highlighter.
+	 * Allows passing information to transformers: https://shiki.style/guide/transformers#meta
+	 *
+	 * @default undefined
+	 */
+	meta?: string;
+	/**
+	 * The styling theme.
+	 * Supports all themes listed here: https://shiki.style/themes
+	 * Instructions for loading a custom theme: https://shiki.style/guide/load-theme
+	 *
+	 * @default "github-dark"
+	 */
+	theme?: ThemePresets | ThemeRegistration | ThemeRegistrationRaw;
+	/**
+	 * Multiple themes to style with -- alternative to "theme" option.
+	 * Supports all themes found above; see https://shiki.style/guide/dual-themes for more information.
+	 */
+	themes?: Record<string, ThemePresets | ThemeRegistration | ThemeRegistrationRaw>;
+	/**
+	 * Chooses a theme from the "themes" option that you've defined as the default styling theme.
+	 *  - <string>: one of the keys defined in the "themes" option. Will throw an error if the key is not defined.
+	 *  - false: disabled. You'll have to apply the styling theme yourself. No effect if the "themes" option is not set.
+	 *
+	 * See https://shiki.style/guide/dual-themes#without-default-color for more information.
+	 *
+	 * @default "light"
+	 */
+	defaultColor?: 'light' | 'dark' | string | false;
+	/**
+	 * Enable word wrapping.
+	 *  - true: enabled.
+	 *  - false: disabled.
+	 *  - null: All overflow styling removed. Code will overflow the element by default.
+	 *
+	 * @default false
+	 */
+	wrap?: boolean | null;
+	/**
+	 * Generate inline code element only, without the pre element wrapper.
+	 *
+	 * @default false
+	 */
+	inline?: boolean;
+	/**
+	 * Shiki transformers to customize the generated HTML by manipulating the hast tree.
+	 * Supports all transformers listed here: https://shiki.style/packages/transformers#transformers
+	 * Instructions for custom transformers: https://shiki.style/guide/transformers
+	 */
+	transformers?: ShikiTransformer[];
+}
+
+const {
+	code,
+	lang = 'plaintext',
+	meta,
+	theme = 'github-dark',
+	themes = {},
+	defaultColor = 'light',
+	wrap = false,
+	inline = false,
+	transformers = [],
+	...rest
+} = Astro.props;
+
+// shiki 1.0 compat
+if (typeof lang === 'object') {
+	// `id` renamed to `name` (always override)
+	if ((lang as any).id) {
+		lang.name = (lang as any).id;
+	}
+	// `grammar` flattened to lang itself
+	if ((lang as any).grammar) {
+		Object.assign(lang, (lang as any).grammar);
+	}
+}
+
+const highlighter = await getCachedHighlighter({
+	langs: [
+		typeof lang === 'string'
+			? Object.keys(bundledLanguages).includes(lang)
+				? lang
+				: 'plaintext'
+			: (lang as any),
+	],
+	theme,
+	themes,
+});
+
+const html = await highlighter.codeToHtml(code, typeof lang === 'string' ? lang : lang.name, {
+	defaultColor,
+	wrap,
+	inline,
+	transformers,
+	meta,
+	attributes: rest as any,
+});
+---
+
+<Fragment set:html={html} />
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\node_modules\astro\components\Debug.astro
+================================================================================
+
+---
+import Code from './Code.astro';
+
+const key = Object.keys(Astro.props)[0];
+const value = Astro.props[key];
+---
+
+<div class="astro-debug">
+	<div class="astro-debug-header">
+		<h2 class="astro-debug-title">
+			<span class="astro-debug-label">Debug</span>
+			<span class="astro-debug-name">"{key}"</span>
+		</h2>
+	</div>
+
+	<Code code={JSON.stringify(value, null, 2)} />
+</div>
+
+<style is:inline>
+	.astro-debug {
+		font-size: 14px;
+		padding: 1rem 1.5rem;
+		background: white;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+			'Open Sans', 'Helvetica Neue', sans-serif;
+	}
+
+	.astro-debug-header,
+	pre.astro-code {
+		margin: -1rem -1.5rem 1rem;
+		padding: 0.25rem 0.75rem;
+	}
+
+	.astro-debug-header {
+		background: #ff1639;
+		border-radius: 4px;
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+
+	.astro-debug-title {
+		font-size: 1em;
+		color: white;
+		margin: 0.5em 0;
+	}
+
+	.astro-debug-label {
+		font-weight: bold;
+		text-transform: uppercase;
+		margin-right: 0.75em;
+	}
+
+	pre.astro-code {
+		border: 1px solid #eee;
+		padding: 1rem 0.75rem;
+		border-radius: 4px;
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		font-size: 14px;
+	}
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\node_modules\astro\components\Image.astro
+================================================================================
+
+---
+import { type LocalImageProps, type RemoteImageProps, getImage, imageConfig } from 'astro:assets';
+import type { UnresolvedImageTransform } from '../dist/assets/types';
+import { applyResponsiveAttributes } from '../dist/assets/utils/imageAttributes.js';
+import { AstroError, AstroErrorData } from '../dist/core/errors/index.js';
+import type { HTMLAttributes } from '../types';
+
+// The TypeScript diagnostic for JSX props uses the last member of the union to suggest props, so it would be better for
+// LocalImageProps to be last. Unfortunately, when we do this the error messages that remote images get are complete nonsense
+// Not 100% sure how to fix this, seems to be a TypeScript issue. Unfortunate.
+type Props = LocalImageProps | RemoteImageProps;
+
+const props = Astro.props;
+
+if (props.alt === undefined || props.alt === null) {
+	throw new AstroError(AstroErrorData.ImageMissingAlt);
+}
+
+// As a convenience, allow width and height to be string with a number in them, to match HTML's native `img`.
+if (typeof props.width === 'string') {
+	props.width = parseInt(props.width);
+}
+
+if (typeof props.height === 'string') {
+	props.height = parseInt(props.height);
+}
+
+const layout = props.layout ?? imageConfig.experimentalLayout ?? 'none';
+const useResponsive = imageConfig.experimentalResponsiveImages && layout !== 'none';
+
+if (useResponsive) {
+	// Apply defaults from imageConfig if not provided
+	props.layout ??= imageConfig.experimentalLayout;
+	props.fit ??= imageConfig.experimentalObjectFit ?? 'cover';
+	props.position ??= imageConfig.experimentalObjectPosition ?? 'center';
+}
+
+const image = await getImage(props as UnresolvedImageTransform);
+
+const additionalAttributes: HTMLAttributes<'img'> = {};
+if (image.srcSet.values.length > 0) {
+	additionalAttributes.srcset = image.srcSet.attribute;
+}
+
+if (import.meta.env.DEV) {
+	additionalAttributes['data-image-component'] = 'true';
+}
+
+const { class: className, ...attributes } = useResponsive
+	? applyResponsiveAttributes({
+			layout,
+			image,
+			props,
+			additionalAttributes,
+		})
+	: { ...additionalAttributes, ...image.attributes };
+---
+
+{/* Applying class outside of the spread prevents it from applying unnecessary astro-* classes */}
+<img src={image.src} {...attributes} class={className} />
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\node_modules\astro\components\Picture.astro
+================================================================================
+
+---
+import { type LocalImageProps, type RemoteImageProps, getImage, imageConfig } from 'astro:assets';
+import * as mime from 'mrmime';
+import { applyResponsiveAttributes } from '../dist/assets/utils/imageAttributes';
+import { isESMImportedImage, resolveSrc } from '../dist/assets/utils/imageKind';
+import { AstroError, AstroErrorData } from '../dist/core/errors/index.js';
+import type {
+	GetImageResult,
+	ImageOutputFormat,
+	UnresolvedImageTransform,
+} from '../dist/types/public/index.js';
+import type { HTMLAttributes } from '../types';
+
+export type Props = (LocalImageProps | RemoteImageProps) & {
+	formats?: ImageOutputFormat[];
+	fallbackFormat?: ImageOutputFormat;
+	pictureAttributes?: HTMLAttributes<'picture'>;
+};
+
+const defaultFormats = ['webp'] as const;
+const defaultFallbackFormat = 'png' as const;
+
+// Certain formats don't want PNG fallbacks:
+// - GIF will typically want to stay as a gif, either for animation or for the lower amount of colors
+// - SVGs can't be converted to raster formats in most cases
+// - JPEGs compress photographs and high-noise images better than PNG in most cases
+// For those, we'll use the original format as the fallback instead.
+const specialFormatsFallback = ['gif', 'svg', 'jpg', 'jpeg'] as const;
+
+const { formats = defaultFormats, pictureAttributes = {}, fallbackFormat, ...props } = Astro.props;
+
+if (props.alt === undefined || props.alt === null) {
+	throw new AstroError(AstroErrorData.ImageMissingAlt);
+}
+
+// Picture attribute inherit scoped styles from class and attributes
+const scopedStyleClass = props.class?.match(/\bastro-\w{8}\b/)?.[0];
+if (scopedStyleClass) {
+	if (pictureAttributes.class) {
+		pictureAttributes.class = `${pictureAttributes.class} ${scopedStyleClass}`;
+	} else {
+		pictureAttributes.class = scopedStyleClass;
+	}
+}
+
+const layout = props.layout ?? imageConfig.experimentalLayout ?? 'none';
+const useResponsive = imageConfig.experimentalResponsiveImages && layout !== 'none';
+
+if (useResponsive) {
+	// Apply defaults from imageConfig if not provided
+	props.layout ??= imageConfig.experimentalLayout;
+	props.fit ??= imageConfig.experimentalObjectFit ?? 'cover';
+	props.position ??= imageConfig.experimentalObjectPosition ?? 'center';
+}
+
+for (const key in props) {
+	if (key.startsWith('data-astro-cid')) {
+		pictureAttributes[key] = props[key];
+	}
+}
+
+const originalSrc = await resolveSrc(props.src);
+const optimizedImages: GetImageResult[] = await Promise.all(
+	formats.map(
+		async (format) =>
+			await getImage({
+				...props,
+				src: originalSrc,
+				format: format,
+				widths: props.widths,
+				densities: props.densities,
+			} as UnresolvedImageTransform),
+	),
+);
+
+let resultFallbackFormat = fallbackFormat ?? defaultFallbackFormat;
+if (
+	!fallbackFormat &&
+	isESMImportedImage(originalSrc) &&
+	(specialFormatsFallback as ReadonlyArray<string>).includes(originalSrc.format)
+) {
+	resultFallbackFormat = originalSrc.format;
+}
+
+const fallbackImage = await getImage({
+	...props,
+	format: resultFallbackFormat,
+	widths: props.widths,
+	densities: props.densities,
+} as UnresolvedImageTransform);
+
+const imgAdditionalAttributes: HTMLAttributes<'img'> = {};
+const sourceAdditionalAttributes: HTMLAttributes<'source'> = {};
+
+// Propagate the `sizes` attribute to the `source` elements
+if (props.sizes) {
+	sourceAdditionalAttributes.sizes = props.sizes;
+}
+
+if (fallbackImage.srcSet.values.length > 0) {
+	imgAdditionalAttributes.srcset = fallbackImage.srcSet.attribute;
+}
+
+const { class: className, ...attributes } = useResponsive
+	? applyResponsiveAttributes({
+			layout,
+			image: fallbackImage,
+			props,
+			additionalAttributes: imgAdditionalAttributes,
+		})
+	: { ...imgAdditionalAttributes, ...fallbackImage.attributes };
+
+if (import.meta.env.DEV) {
+	imgAdditionalAttributes['data-image-component'] = 'true';
+}
+---
+
+<picture {...pictureAttributes}>
+	{
+		Object.entries(optimizedImages).map(([_, image]) => {
+			const srcsetAttribute =
+				props.densities || (!props.densities && !props.widths && !useResponsive)
+					? `${image.src}${image.srcSet.values.length > 0 ? ', ' + image.srcSet.attribute : ''}`
+					: image.srcSet.attribute;
+			return (
+				<source
+					srcset={srcsetAttribute}
+					type={mime.lookup(image.options.format ?? image.src) ?? `image/${image.options.format}`}
+					{...sourceAdditionalAttributes}
+				/>
+			);
+		})
+	}
+	{/* Applying class outside of the spread prevents it from applying unnecessary astro-* classes */}
+	<img src={fallbackImage.src} {...attributes} class={className} />
+</picture>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\node_modules\astro\components\ResponsiveImage.astro
+================================================================================
+
+---
+import type { LocalImageProps, RemoteImageProps } from 'astro:assets';
+import Image from './Image.astro';
+
+type Props = LocalImageProps | RemoteImageProps;
+
+const { class: className, ...props } = Astro.props;
+
+import './image.css';
+---
+
+{/* Applying class outside of the spread prevents it from applying unnecessary astro-* classes */}
+<Image {...props} class={className} />
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\node_modules\astro\components\ResponsivePicture.astro
+================================================================================
+
+---
+import { default as Picture, type Props as PictureProps } from './Picture.astro';
+
+type Props = PictureProps;
+
+const { class: className, ...props } = Astro.props;
+---
+
+{/* Applying class outside of the spread prevents it from applying unnecessary astro-* classes */}
+
+<Picture {...props} class={className} />
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\Benefits.astro
+================================================================================
+
+---
+interface Benefit {
+  icon: string;
+  title: string;
+  description: string;
+  stats?: {
+    value: string;
+    label: string;
+  };
+}
+
+const benefits: Benefit[] = [
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+    </svg>`,
+    title: "Policy Compliance",
+    description: "Ensure travel bookings align with company policies automatically. Our AI-driven system prevents policy violations before they happen.",
+    stats: {
+      value: "92%",
+      label: "Policy Compliance Rate"
+    }
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+      <line x1="2" y1="10" x2="22" y2="10"></line>
+    </svg>`,
+    title: "Smart Spending Controls",
+    description: "Proactive spend management without constant oversight. Real-time budget tracking and automated approval workflows.",
+    stats: {
+      value: "30%",
+      label: "Average Cost Savings"
+    }
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>`,
+    title: "24/7 Support",
+    description: "Round-the-clock assistance for all your travel needs. Expert support available globally in multiple languages.",
+    stats: {
+      value: "3min",
+      label: "Average Response Time"
+    }
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+      <line x1="12" y1="4" x2="12" y2="20"></line>
+      <line x1="4" y1="12" x2="20" y2="12"></line>
+    </svg>`,
+    title: "Scale Your Program",
+    description: "Tools to manage and grow your travel program efficiently. From startups to enterprises, we scale with your needs.",
+    stats: {
+      value: "10k+",
+      label: "Companies Trust Us"
+    }
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>`,
+    title: "Team-Friendly",
+    description: "Perfect for everyone from travelers to finance teams. Intuitive interface with role-based access controls.",
+    stats: {
+      value: "98%",
+      label: "User Satisfaction"
+    }
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+    </svg>`,
+    title: "Smart Integration",
+    description: "Seamlessly connects with your existing tools. Native integrations with popular expense and HR platforms.",
+    stats: {
+      value: "50+",
+      label: "Integration Partners"
+    }
+  }
+];
+---
+
+<section id="benefits" class="py-24 bg-gradient-to-b from-white to-gray-50">
+  <div class="container mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="text-4xl font-bold mb-6">Why Choose Navan Travel</h2>
+      <p class="text-xl text-gray-600">Experience the future of business travel management with our comprehensive platform.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+      {benefits.map(({ icon, title, description, stats }) => (
+        <div class="benefit-card group p-8 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300">
+          <div class="text-blue-600 mb-6 transform group-hover:scale-110 transition-transform duration-300" set:html={icon} />
+          <h3 class="text-xl font-semibold mb-3">{title}</h3>
+          <p class="text-gray-600 mb-6">{description}</p>
+          {stats && (
+            <div class="mt-auto pt-4 border-t border-gray-100">
+              <div class="text-2xl font-bold text-blue-600">{stats.value}</div>
+              <div class="text-sm text-gray-500">{stats.label}</div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+    
+    <div class="mt-16 text-center">
+      <a
+        href="#roi-calculator"
+        class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+      >
+        Calculate Your Savings
+        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .benefit-card {
+    transform: translateY(0);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+  }
+  
+  .benefit-card:hover {
+    transform: translateY(-8px);
+  }
+  
+  @media (min-width: 768px) {
+    .benefit-card:nth-child(even) {
+      transform: translateY(20px);
+    }
+    
+    .benefit-card:nth-child(even):hover {
+      transform: translateY(12px);
+    }
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\CTA.astro
+================================================================================
+
+---
+---
+
+<div class="py-24 bg-blue-600">
+  <div class="container mx-auto px-6 text-center">
+    <h2 class="text-4xl font-bold text-white mb-8">Ready to Transform Your Business Travel?</h2>
+    <p class="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
+      Join thousands of companies that trust Navan Travel for their business travel needs
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="https://joinnavan.com"
+        class="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+      >
+        Get Started Free
+        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a
+        href="https://joinnavan.com"
+        class="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+      >
+        Request Demo
+        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\FeatureComparison.astro
+================================================================================
+
+---
+---
+
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-12">Feature Comparison</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- Header -->
+      <div class="hidden md:block"></div>
+      <div class="text-center font-semibold">
+        <h3 class="text-xl mb-4">Basic</h3>
+      </div>
+      <div class="text-center font-semibold">
+        <h3 class="text-xl mb-4">Professional</h3>
+      </div>
+      <div class="text-center font-semibold">
+        <h3 class="text-xl mb-4">Enterprise</h3>
+      </div>
+
+      <!-- Features -->
+      {[
+        'Travel Booking',
+        'Expense Management',
+        'Policy Compliance',
+        'Reporting & Analytics',
+        'Mobile App',
+        'Customer Support',
+        'Custom Integrations',
+        'Dedicated Account Manager'
+      ].map((feature) => (
+        <div class="grid grid-cols-4 gap-8 items-center">
+          <div class="font-medium">{feature}</div>
+          <div class="text-center">
+            {feature === 'Travel Booking' || 
+             feature === 'Expense Management' || 
+             feature === 'Mobile App' ? 
+             '✓' : '×'}
+          </div>
+          <div class="text-center">
+            {feature !== 'Custom Integrations' && 
+             feature !== 'Dedicated Account Manager' ? 
+             '✓' : '×'}
+          </div>
+          <div class="text-center">✓</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  section {
+    scroll-margin-top: 100px;
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\Features.astro
+================================================================================
+
+---
+import Card from './ui/Card.astro';
+
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+  benefits: string[];
+}
+
+const features: Feature[] = [
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 2L11 13"></path>
+      <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+    </svg>`,
+    title: "Global Flight Booking",
+    description: "Access the world's largest inventory of flights with real-time pricing and availability.",
+    benefits: [
+      "AI-powered best fare search",
+      "Corporate policy compliance",
+      "24/7 travel support",
+      "Automated expense reporting"
+    ]
+  },
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 20h20"></path>
+      <path d="M5 20v-4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"></path>
+      <path d="M12 4v6"></path>
+      <path d="M9 8h6"></path>
+      <path d="M8 4h8"></path>
+    </svg>`,
+    title: "Smart Hotel Solutions",
+    description: "Find and book the perfect accommodations with our curated selection of hotels worldwide.",
+    benefits: [
+      "Negotiated corporate rates",
+      "Virtual payment solutions",
+      "Room block management",
+      "Duty of care compliance"
+    ]
+  },
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+      <path d="M9 12h6"></path>
+      <path d="M12 9v6"></path>
+    </svg>`,
+    title: "Rail & Ground Transport",
+    description: "Seamlessly book trains and local transportation for complete journey management.",
+    benefits: [
+      "Global rail coverage",
+      "Mobile tickets",
+      "Schedule alerts",
+      "Carbon footprint tracking"
+    ]
+  },
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+      <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+      <path d="M5 17h-2v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6"></path>
+      <path d="M6 9h11"></path>
+    </svg>`,
+    title: "Car Rental Management",
+    description: "Book vehicles globally with our extensive network of car rental partners.",
+    benefits: [
+      "Corporate discount rates",
+      "Insurance included",
+      "Flexible cancellation",
+      "Direct billing options"
+    ]
+  }
+];
+---
+
+<section id="features" class="py-24 bg-gradient-to-b from-gray-50 to-white">
+  <div class="container mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="text-4xl font-bold mb-6">Comprehensive Travel Solutions</h2>
+      <p class="text-xl text-gray-600">Everything you need to manage business travel in one powerful platform.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {features.map(({ icon, title, description, benefits }) => (
+        <Card>
+          <div class="h-full flex flex-col">
+            <div class="text-blue-600 mb-4" set:html={icon} />
+            <h3 class="text-xl font-semibold mb-3">{title}</h3>
+            <p class="text-gray-600 mb-6">{description}</p>
+            <ul class="mt-auto space-y-2">
+              {benefits.map(benefit => (
+                <li class="flex items-center text-gray-600">
+                  <svg class="w-4 h-4 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                  {benefit}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Card>
+      ))}
+    </div>
+    
+    <div class="mt-16 text-center">
+      <a
+        href="#pricing"
+        class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+      >
+        See Our Pricing
+        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .card {
+    transition: all 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+  }
+  
+  svg {
+    transition: transform 0.2s ease;
+  }
+  
+  .card:hover svg {
+    transform: scale(1.1);
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\Footer.astro
+================================================================================
+
+---
+const currentYear = new Date().getFullYear();
+
+const socialLinks = [
+  { name: 'LinkedIn', url: 'https://linkedin.com/company/navan/?viewAsMember=true', icon: 'fab fa-linkedin' },
+  { name: 'Twitter', url: 'https://x.com/Navan', icon: 'fab fa-x-twitter' },
+  { name: 'TikTok', url: 'https://tiktok.com/@navan?is_from_webapp=1&sender_device=pc', icon: 'fab fa-tiktok' },
+  { name: 'YouTube', url: 'https://youtube.com/@GetNavan', icon: 'fab fa-youtube' },
+  { name: 'Instagram', url: 'https://instagram.com/getnavan/', icon: 'fab fa-instagram' },
+  { name: 'Facebook', url: 'https://facebook.com/GetNavan', icon: 'fab fa-facebook' }
+];
+---
+
+<footer class="bg-gray-900 text-gray-400 py-8">
+  <div class="container mx-auto px-6">
+    <!-- Main Footer Content -->
+    <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
+      <!-- Contact Information -->
+      <div class="flex items-center space-x-6">
+        <a href="tel:8003643644" class="hover:text-white transition-colors">
+          <i class="fas fa-phone mr-2"></i>(800) 364-3644
+        </a>
+        <a href="mailto:support@navan.com" class="hover:text-white transition-colors">
+          <i class="fas fa-envelope mr-2"></i>support@navan.com
+        </a>
+        <span>
+          <i class="fas fa-map-marker-alt mr-2"></i>107 The Lakes, Larkfield, Aylesford, Kent, ME20 6SJ
+        </span>
+      </div>
+    </div>
+
+    <!-- Social Links -->
+    <div class="flex flex-wrap justify-center gap-6 mb-6">
+      {socialLinks.map(social => (
+        <a 
+          href={social.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-gray-400 hover:text-white transition-colors text-xl"
+          aria-label={`Follow us on ${social.name}`}
+        >
+          <i class={social.icon} aria-hidden="true"></i>
+        </a>
+      ))}
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="border-t border-gray-800 pt-6">
+      <div class="flex flex-wrap justify-between items-center gap-4">
+        <!-- Copyright -->
+        <div class="text-sm">
+          {currentYear} Navan Travel. All rights reserved.
+        </div>
+
+        <!-- Legal Links -->
+        <div class="flex items-center space-x-4 text-sm">
+          <a href="/privacy-policy" class="hover:text-white transition-colors">Privacy Policy</a>
+        </div>
+      </div>
+
+      <!-- Affiliate Disclaimer -->
+      <div class="text-sm text-center mt-4">
+        <p class="text-gray-500">
+          <strong>Affiliate Disclaimer:</strong> Some links on this website may be affiliate links. If you click on them and make a purchase, we may receive a commission at no additional cost to you.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Font Awesome Script -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\Header.astro
+================================================================================
+
+---
+interface NavItem {
+  label: string;
+  href: string;
+  isExternal?: boolean;
+}
+
+const navItems: NavItem[] = [
+  { label: 'Solutions', href: '#solutions' },
+  { label: 'Features', href: '#features' },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'Integrations', href: '#integrations' },
+  { label: 'Login', href: 'https://joinnavan.com/login', isExternal: true },
+];
+---
+
+<header class="fixed w-full bg-white/95 backdrop-blur-sm z-50 shadow-sm">
+  <div class="container mx-auto px-6 py-4">
+    <nav class="flex items-center justify-between">
+      <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
+        <img src="/Navan-Icon.png" alt="Navan Logo" class="h-8 w-auto" />
+        <span class="ml-3 text-xl font-bold text-gray-900">Navan</span>
+      </a>
+      
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        {navItems.map(item => (
+          <a
+            href={item.href}
+            class="text-gray-600 hover:text-blue-600 transition-colors"
+            {...item.isExternal && { target: '_blank', rel: 'noopener noreferrer' }}
+          >
+            {item.label}
+          </a>
+        ))}
+        <a
+          href="https://joinnavan.com/demo"
+          class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 transform hover:scale-105"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Request Demo
+        </a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button
+        id="menuButton"
+        class="md:hidden text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        aria-label="Toggle menu"
+      >
+        <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4">
+      <div class="flex flex-col space-y-4">
+        {navItems.map(item => (
+          <a
+            href={item.href}
+            class="text-gray-600 hover:text-blue-600 transition-colors py-2"
+            {...item.isExternal && { target: '_blank', rel: 'noopener noreferrer' }}
+          >
+            {item.label}
+          </a>
+        ))}
+        <a
+          href="https://joinnavan.com/demo"
+          class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Request Demo
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Toggle mobile menu
+  const menuButton = document.getElementById('menuButton');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuIcon = document.getElementById('menuIcon');
+  const closeIcon = document.getElementById('closeIcon');
+  let isMenuOpen = false;
+
+  function toggleMenu() {
+    isMenuOpen = !isMenuOpen;
+    mobileMenu?.classList.toggle('hidden');
+    menuIcon?.classList.toggle('hidden');
+    closeIcon?.classList.toggle('hidden');
+  }
+
+  menuButton?.addEventListener('click', toggleMenu);
+
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (isMenuOpen && !menuButton?.contains(e.target as Node) && !mobileMenu?.contains(e.target as Node)) {
+      toggleMenu();
+    }
+  });
+
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = anchor.getAttribute('href');
+      if (!targetId) return;
+      
+      const targetElement = document.querySelector(targetId);
+      if (!targetElement) return;
+
+      // Close mobile menu if open
+      if (isMenuOpen) {
+        toggleMenu();
+      }
+
+      // Calculate header height for offset
+      const header = document.querySelector('header');
+      const headerHeight = header ? header.offsetHeight : 0;
+
+      // Smooth scroll to target with header offset
+      window.scrollTo({
+        top: targetElement.getBoundingClientRect().top + window.scrollY - headerHeight - 20,
+        behavior: 'smooth'
+      });
+    });
+  });
+
+  // Add active state to nav items based on scroll position
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('a[href^="#"]');
+
+  function updateActiveNavItem() {
+    const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+    const fromTop = window.scrollY + headerHeight + 100;
+
+    sections.forEach(section => {
+      const { top, bottom } = section.getBoundingClientRect();
+      const sectionTop = top + window.scrollY;
+      const sectionBottom = bottom + window.scrollY;
+
+      if (fromTop >= sectionTop && fromTop <= sectionBottom) {
+        const id = section.getAttribute('id');
+        navLinks.forEach(link => {
+          link.classList.toggle('text-blue-600', link.getAttribute('href') === `#${id}`);
+        });
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveNavItem);
+  updateActiveNavItem();
+</script>
+
+<style>
+  header {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    #mobileMenu {
+      animation: slideDown 0.3s ease-out;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\Hero.astro
+================================================================================
+
+---
+import '../styles/hero.css';
+import BackgroundGradientAnimation from '../components/ui/BackgroundGradientAnimation.astro';
+import MagneticButton from '../components/ui/MagneticButton.astro';
+---
+
+<div class="min-h-screen bg-gradient-to-b from-gray-900 to-blue-900 relative overflow-hidden">
+  <BackgroundGradientAnimation />
+  <div class="relative min-h-screen flex items-center hero-background">
+    <div class="container mx-auto px-6">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="mb-8">
+          <span class="inline-block px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm font-medium mb-4">
+            Trusted by 10,000+ Companies Worldwide
+          </span>
+        </div>
+        <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+          Business Travel & Expense Management. 
+          <span class="text-blue-400">Solved.</span>
+        </h1>
+        <p class="text-xl text-gray-200 mb-8 leading-relaxed">
+          From team offsites to deal-closing dinners, give employees the freedom to achieve business goals while you control spend. Save up to 30% on travel costs.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <MagneticButton>
+            <a
+              href="https://joinnavan.com"
+              class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 transform hover:scale-105"
+            >
+              Get Started Free
+              <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </MagneticButton>
+          <MagneticButton>
+            <a
+              href="https://joinnavan.com"
+              class="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white rounded-lg font-semibold hover:bg-white/20 backdrop-blur-sm transition-all duration-200 border border-white/20"
+            >
+              Request Demo
+              <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </MagneticButton>
+        </div>
+        
+        <!-- Social Proof Metrics -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div class="p-4 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div class="text-3xl font-bold text-white mb-1">30%</div>
+            <div class="text-sm text-gray-300">Average Cost Savings</div>
+          </div>
+          <div class="p-4 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div class="text-3xl font-bold text-white mb-1">10k+</div>
+            <div class="text-sm text-gray-300">Companies Trust Us</div>
+          </div>
+          <div class="p-4 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div class="text-3xl font-bold text-white mb-1">92%</div>
+            <div class="text-sm text-gray-300">Policy Compliance</div>
+          </div>
+          <div class="p-4 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div class="text-3xl font-bold text-white mb-1">24/7</div>
+            <div class="text-sm text-gray-300">Global Support</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\Integrations.astro
+================================================================================
+
+---
+const integrations = [
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 3H2a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h20a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM7 19H3V5h4M21 19h-4V5h4M11 19h2V5h-2"></path>
+    </svg>`,
+    name: "Slack" 
+  },
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+      <polyline points="22,6 12,13 2,6"></polyline>
+    </svg>`,
+    name: "Gmail" 
+  },
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      <path d="M8 10h.01"></path>
+      <path d="M12 10h.01"></path>
+      <path d="M16 10h.01"></path>
+    </svg>`,
+    name: "Outlook" 
+  },
+  { 
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+    </svg>`,
+    name: "Calendar" 
+  }
+];
+---
+
+<div class="py-24 bg-gray-50">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold text-center mb-16">Seamless Integrations</h2>
+    <div class="flex justify-center items-center gap-12 flex-wrap">
+      {integrations.map(({ icon, name }) => (
+        <div class="flex flex-col items-center gap-2">
+          <div class="text-gray-600" set:html={icon} />
+          <span class="text-sm font-medium">{name}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\Pricing.astro
+================================================================================
+
+---
+---
+
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-12">Simple, Transparent Pricing</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Basic Plan -->
+      <div class="p-8 border rounded-lg shadow-lg">
+        <h3 class="text-2xl font-bold mb-4">Basic</h3>
+        <p class="text-gray-600 mb-6">Perfect for small teams</p>
+        <div class="text-4xl font-bold mb-6">$29<span class="text-lg font-normal">/month</span></div>
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Basic travel booking
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Simple expense tracking
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Email support
+          </li>
+        </ul>
+        <button class="w-full py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          Get Started
+        </button>
+      </div>
+
+      <!-- Professional Plan -->
+      <div class="p-8 border rounded-lg shadow-lg bg-blue-50 transform scale-105">
+        <div class="absolute top-0 right-0 -translate-y-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm">
+          Popular
+        </div>
+        <h3 class="text-2xl font-bold mb-4">Professional</h3>
+        <p class="text-gray-600 mb-6">For growing businesses</p>
+        <div class="text-4xl font-bold mb-6">$99<span class="text-lg font-normal">/month</span></div>
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Advanced travel booking
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Complete expense management
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            24/7 priority support
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Advanced reporting
+          </li>
+        </ul>
+        <button class="w-full py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          Get Started
+        </button>
+      </div>
+
+      <!-- Enterprise Plan -->
+      <div class="p-8 border rounded-lg shadow-lg">
+        <h3 class="text-2xl font-bold mb-4">Enterprise</h3>
+        <p class="text-gray-600 mb-6">For large organizations</p>
+        <div class="text-4xl font-bold mb-6">Custom</div>
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Custom travel policies
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Enterprise integrations
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Dedicated account manager
+          </li>
+          <li class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Custom reporting & analytics
+          </li>
+        </ul>
+        <button class="w-full py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          Contact Sales
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  section {
+    scroll-margin-top: 100px;
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ROICalculator.astro
+================================================================================
+
+---
+// ROICalculator.astro
+---
+
+<script>
+  // Move the JavaScript logic to client-side script
+  document.addEventListener('DOMContentLoaded', () => {
+    const employeesInput = document.getElementById('employees') as HTMLInputElement;
+    const travelSpendInput = document.getElementById('travelSpend') as HTMLInputElement;
+    const employeesValue = document.getElementById('employeesValue');
+    const travelSpendValue = document.getElementById('travelSpendValue');
+    const travelCostSavings = document.getElementById('travelCostSavings');
+    const timeEfficiencyGains = document.getElementById('timeEfficiencyGains');
+    const complianceGains = document.getElementById('complianceGains');
+    const totalSavings = document.getElementById('totalSavings');
+
+    function updateCalculations() {
+      const employees = Number(employeesInput.value);
+      const travelSpend = Number(travelSpendInput.value);
+
+      // Calculate savings
+      const savings = {
+        travelCost: Math.round(travelSpend * 0.3),
+        timeSaved: Math.round((employees * 5 * 12) * 50),
+        complianceGains: Math.round(travelSpend * 0.15),
+      };
+
+      const total = Object.values(savings).reduce((a, b) => a + b, 0);
+
+      // Update display
+      if (employeesValue) employeesValue.textContent = employees.toString();
+      if (travelSpendValue) travelSpendValue.textContent = `$${(travelSpend/1000).toFixed(0)}k`;
+      if (travelCostSavings) travelCostSavings.textContent = `$${savings.travelCost.toLocaleString()}`;
+      if (timeEfficiencyGains) timeEfficiencyGains.textContent = `$${savings.timeSaved.toLocaleString()}`;
+      if (complianceGains) complianceGains.textContent = `$${savings.complianceGains.toLocaleString()}`;
+      if (totalSavings) totalSavings.textContent = `$${total.toLocaleString()}`;
+    }
+
+    employeesInput?.addEventListener('input', updateCalculations);
+    travelSpendInput?.addEventListener('input', updateCalculations);
+
+    // Initial calculation
+    updateCalculations();
+  });
+</script>
+
+<div class="py-24 bg-gray-50">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold mb-4">Calculate Your Savings</h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        See how much your organization could save with Navan Travel
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div class="bg-white p-8 rounded-xl shadow-sm">
+        <h3 class="text-2xl font-bold mb-6">Input Your Numbers</h3>
+        
+        <div class="space-y-6">
+          <div>
+            <label for="employees" class="block text-gray-700 mb-2">Number of Employees</label>
+            <input
+              type="range"
+              id="employees"
+              name="employees"
+              min="10"
+              max="1000"
+              value="100"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              title="Adjust number of employees"
+            />
+            <div class="flex justify-between mt-2">
+              <span class="text-sm text-gray-600">10</span>
+              <span class="text-sm font-medium" id="employeesValue">100</span>
+              <span class="text-sm text-gray-600">1,000+</span>
+            </div>
+          </div>
+
+          <div>
+            <label for="travelSpend" class="block text-gray-700 mb-2">Annual Travel Spend ($)</label>
+            <input
+              type="range"
+              id="travelSpend"
+              name="travelSpend"
+              min="50000"
+              max="5000000"
+              step="50000"
+              value="500000"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              title="Adjust annual travel spend"
+            />
+            <div class="flex justify-between mt-2">
+              <span class="text-sm text-gray-600">$50k</span>
+              <span class="text-sm font-medium" id="travelSpendValue">$500k</span>
+              <span class="text-sm text-gray-600">$5M+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-8 rounded-xl shadow-sm">
+        <h3 class="text-2xl font-bold mb-6">Estimated Annual Savings</h3>
+        
+        <div class="space-y-6">
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-gray-700">Direct Travel Cost Savings</span>
+              <span class="text-xl font-bold text-green-600" id="travelCostSavings">$150,000</span>
+            </div>
+            <p class="text-sm text-gray-600">Through negotiated rates and smart booking technology</p>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-gray-700">Time Efficiency Gains</span>
+              <span class="text-xl font-bold text-green-600" id="timeEfficiencyGains">$300,000</span>
+            </div>
+            <p class="text-sm text-gray-600">From automated booking and expense processes</p>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-gray-700">Policy Compliance Benefits</span>
+              <span class="text-xl font-bold text-green-600" id="complianceGains">$75,000</span>
+            </div>
+            <p class="text-sm text-gray-600">Through better policy enforcement and spend control</p>
+          </div>
+
+          <div class="pt-6 border-t">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-gray-900 font-bold">Total Potential Savings</span>
+              <span class="text-2xl font-bold text-blue-600" id="totalSavings">$525,000</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <a
+            href="https://joinnavan.com/demo"
+            class="block text-center py-3 px-6 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Get Your Custom ROI Analysis
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\Welcome.astro
+================================================================================
+
+---
+import astroLogo from '../assets/astro.svg';
+import background from '../assets/background.svg';
+---
+
+<div id="container">
+	<img id="background" src={background.src} alt="" fetchpriority="high" />
+	<main>
+		<section id="hero">
+			<a href="https://astro.build"
+				><img src={astroLogo.src} width="115" height="48" alt="Astro Homepage" /></a
+			>
+			<h1>
+				To get started, open the <code><pre>src/pages</pre></code> directory in your project.
+			</h1>
+			<section id="links">
+				<a class="button" href="https://docs.astro.build">Read our docs</a>
+				<a href="https://astro.build/chat"
+					>Join our Discord <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36"
+						><path
+							fill="currentColor"
+							d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
+						></path></svg
+					>
+				</a>
+			</section>
+		</section>
+	</main>
+
+	<a href="https://astro.build/blog/astro-5/" id="news" class="box">
+		<svg width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg"
+			><path
+				d="M24.667 12c1.333 1.414 2 3.192 2 5.334 0 4.62-4.934 5.7-7.334 12C18.444 28.567 18 27.456 18 26c0-4.642 6.667-7.053 6.667-14Zm-5.334-5.333c1.6 1.65 2.4 3.43 2.4 5.333 0 6.602-8.06 7.59-6.4 17.334C13.111 27.787 12 25.564 12 22.666c0-4.434 7.333-8 7.333-16Zm-6-5.333C15.111 3.555 16 5.556 16 7.333c0 8.333-11.333 10.962-5.333 22-3.488-.774-6-4-6-8 0-8.667 8.666-10 8.666-20Z"
+				fill="#111827"></path></svg
+		>
+		<h2>What's New in Astro 5.0?</h2>
+		<p>
+			From content layers to server islands, click to learn more about the new features and
+			improvements in Astro 5.0
+		</p>
+	</a>
+</div>
+
+<style>
+	#background {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: -1;
+		filter: blur(100px);
+	}
+
+	#container {
+		font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+		height: 100%;
+	}
+
+	main {
+		height: 100%;
+		display: flex;
+		justify-content: center;
+	}
+
+	#hero {
+		display: flex;
+		align-items: start;
+		flex-direction: column;
+		justify-content: center;
+		padding: 16px;
+	}
+
+	h1 {
+		font-size: 22px;
+		margin-top: 0.25em;
+	}
+
+	#links {
+		display: flex;
+		gap: 16px;
+	}
+
+	#links a {
+		display: flex;
+		align-items: center;
+		padding: 10px 12px;
+		color: #111827;
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+
+	#links a:hover {
+		color: rgb(78, 80, 86);
+	}
+
+	#links a svg {
+		height: 1em;
+		margin-left: 8px;
+	}
+
+	#links a.button {
+		color: white;
+		background: linear-gradient(83.21deg, #3245ff 0%, #bc52ee 100%);
+		box-shadow:
+			inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+			inset 0 -2px 0 rgba(0, 0, 0, 0.24);
+		border-radius: 10px;
+	}
+
+	#links a.button:hover {
+		color: rgb(230, 230, 230);
+		box-shadow: none;
+	}
+
+	pre {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas,
+			'DejaVu Sans Mono', monospace;
+		font-weight: normal;
+		background: linear-gradient(14deg, #d83333 0%, #f041ff 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		margin: 0;
+	}
+
+	h2 {
+		margin: 0 0 1em;
+		font-weight: normal;
+		color: #111827;
+		font-size: 20px;
+	}
+
+	p {
+		color: #4b5563;
+		font-size: 16px;
+		line-height: 24px;
+		letter-spacing: -0.006em;
+		margin: 0;
+	}
+
+	code {
+		display: inline-block;
+		background:
+			linear-gradient(66.77deg, #f3cddd 0%, #f5cee7 100%) padding-box,
+			linear-gradient(155deg, #d83333 0%, #f041ff 18%, #f5cee7 45%) border-box;
+		border-radius: 8px;
+		border: 1px solid transparent;
+		padding: 6px 8px;
+	}
+
+	.box {
+		padding: 16px;
+		background: rgba(255, 255, 255, 1);
+		border-radius: 16px;
+		border: 1px solid white;
+	}
+
+	#news {
+		position: absolute;
+		bottom: 16px;
+		right: 16px;
+		max-width: 300px;
+		text-decoration: none;
+		transition: background 0.2s;
+		backdrop-filter: blur(50px);
+	}
+
+	#news:hover {
+		background: rgba(255, 255, 255, 0.55);
+	}
+
+	@media screen and (max-height: 368px) {
+		#news {
+			display: none;
+		}
+	}
+
+	@media screen and (max-width: 768px) {
+		#container {
+			display: flex;
+			flex-direction: column;
+		}
+
+		#hero {
+			display: block;
+			padding-top: 10%;
+		}
+
+		#links {
+			flex-wrap: wrap;
+		}
+
+		#links a.button {
+			padding: 14px 18px;
+		}
+
+		#news {
+			right: 16px;
+			left: 16px;
+			bottom: 2.5rem;
+			max-width: 100%;
+		}
+
+		h1 {
+			line-height: 1.5;
+		}
+	}
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ui\BackgroundGradientAnimation.astro
+================================================================================
+
+---
+---
+
+<canvas id="gradient-canvas" class="absolute inset-0 w-full h-full z-[-1] opacity-40"></canvas>
+
+<script>
+  const canvas = document.getElementById('gradient-canvas') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d');
+  
+  if (ctx) {
+    const container = canvas.parentElement;
+    if (container) {
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      const gradient = ctx.createLinearGradient(0, 0, width, height);
+      gradient.addColorStop(0, '#1a365d');
+      gradient.addColorStop(0.5, '#2563eb');
+      gradient.addColorStop(1, '#1e40af');
+
+      const particles = Array.from({ length: 50 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        speed: 0.5 + Math.random() * 1,
+        size: 2 + Math.random() * 3
+      }));
+
+      function animate() {
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        particles.forEach(particle => {
+          particle.y -= particle.speed;
+          if (particle.y < -10) {
+            particle.y = height + 10;
+            particle.x = Math.random() * width;
+          }
+
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+          ctx.fill();
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+
+      window.addEventListener('resize', () => {
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+      });
+    }
+  }
+</script>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ui\Card.astro
+================================================================================
+
+---
+interface Props {
+  variant?: 'default' | 'glass' | 'outline';
+  className?: string;
+  hover?: boolean;
+  animation?: boolean;
+}
+
+const { 
+  variant = 'default',
+  className = "",
+  hover = true,
+  animation = true
+} = Astro.props;
+
+const variants = {
+  default: 'bg-white shadow-sm hover:shadow-lg',
+  glass: 'bg-white/90 backdrop-blur-sm hover:bg-white/95',
+  outline: 'border border-gray-200 hover:border-gray-300 bg-transparent'
+};
+
+const baseClasses = 'rounded-xl transition-all duration-300';
+const hoverClasses = hover ? 'hover:transform hover:-translate-y-1' : '';
+const variantClasses = variants[variant];
+---
+
+<div class:list={[baseClasses, variantClasses, hoverClasses, className]}>
+  <div class={`p-6 ${animation ? 'group' : ''}`}>
+    <slot />
+  </div>
+</div>
+
+<style>
+  div {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ui\Carousel.astro
+================================================================================
+
+---
+interface Props {
+  id: string;
+  className?: string;
+}
+
+const { id, className = "" } = Astro.props;
+---
+
+<div class={`carousel-container overflow-hidden relative ${className}`}>
+  <div id={id} class="carousel-track flex transition-transform duration-500 ease-out">
+    <slot />
+  </div>
+  <button class="carousel-button prev absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+  <button class="carousel-button next absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+</div>
+
+<script define:vars={{ id }}>
+  class Carousel {
+    constructor(id) {
+      this.track = document.getElementById(id);
+      this.container = this.track.parentElement;
+      this.slides = Array.from(this.track.children);
+      this.currentIndex = 0;
+      
+      this.container.querySelector('.prev').addEventListener('click', () => this.prev());
+      this.container.querySelector('.next').addEventListener('click', () => this.next());
+      
+      // Clone slides for infinite effect
+      this.slides.forEach(slide => {
+        const clone = slide.cloneNode(true);
+        this.track.appendChild(clone);
+      });
+      
+      this.updateSlidePositions();
+      
+      // Optional: Auto-advance
+      setInterval(() => this.next(), 5000);
+    }
+    
+    updateSlidePositions() {
+      const slideWidth = this.slides[0].offsetWidth;
+      this.track.style.transform = `translateX(-${this.currentIndex * slideWidth}px)`;
+    }
+    
+    next() {
+      this.currentIndex++;
+      if (this.currentIndex >= this.slides.length) {
+        this.currentIndex = 0;
+        this.track.style.transition = 'none';
+        this.updateSlidePositions();
+        setTimeout(() => {
+          this.track.style.transition = 'transform 500ms ease-out';
+        }, 10);
+      } else {
+        this.updateSlidePositions();
+      }
+    }
+    
+    prev() {
+      this.currentIndex--;
+      if (this.currentIndex < 0) {
+        this.currentIndex = this.slides.length - 1;
+        this.track.style.transition = 'none';
+        this.updateSlidePositions();
+        setTimeout(() => {
+          this.track.style.transition = 'transform 500ms ease-out';
+        }, 10);
+      } else {
+        this.updateSlidePositions();
+      }
+    }
+  }
+  
+  // Initialize carousel
+  new Carousel(id);
+</script>
+
+<style>
+  .carousel-container {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent
+    );
+  }
+  
+  .carousel-button {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .carousel-container:hover .carousel-button {
+    opacity: 1;
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ui\FeatureComparison.astro
+================================================================================
+
+---
+interface Feature {
+  name: string;
+  description: string;
+  basic: string | boolean;
+  professional: string | boolean;
+  enterprise: string | boolean;
+}
+
+interface Props {
+  features: Feature[];
+}
+
+const { features } = Astro.props;
+---
+
+<div class="overflow-x-auto">
+  <table class="w-full">
+    <thead>
+      <tr class="border-b border-gray-800">
+        <th class="py-4 px-6 text-left text-gray-300 font-medium">Feature</th>
+        <th class="py-4 px-6 text-center text-gray-300 font-medium">Basic</th>
+        <th class="py-4 px-6 text-center text-gray-300 font-medium relative">
+          Professional
+          <span class="absolute -top-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-500 text-white text-xs rounded-full">
+            Popular
+          </span>
+        </th>
+        <th class="py-4 px-6 text-center text-gray-300 font-medium">Enterprise</th>
+      </tr>
+    </thead>
+    <tbody>
+      {features.map((feature, index) => (
+        <tr class={`border-b border-gray-800 hover:bg-white/5 transition-colors ${index % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
+          <td class="py-4 px-6">
+            <div class="text-white font-medium">{feature.name}</div>
+            <div class="text-sm text-gray-400">{feature.description}</div>
+          </td>
+          <td class="py-4 px-6 text-center">
+            {typeof feature.basic === 'boolean' ? (
+              <span class={feature.basic ? 'text-green-400' : 'text-gray-500'}>
+                {feature.basic ? (
+                  <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                ) : (
+                  <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                )}
+              </span>
+            ) : (
+              <span class="text-gray-300">{feature.basic}</span>
+            )}
+          </td>
+          <td class="py-4 px-6 text-center bg-blue-600/[0.03]">
+            {typeof feature.professional === 'boolean' ? (
+              <span class={feature.professional ? 'text-green-400' : 'text-gray-500'}>
+                {feature.professional ? (
+                  <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                ) : (
+                  <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                )}
+              </span>
+            ) : (
+              <span class="text-gray-300">{feature.professional}</span>
+            )}
+          </td>
+          <td class="py-4 px-6 text-center">
+            {typeof feature.enterprise === 'boolean' ? (
+              <span class={feature.enterprise ? 'text-green-400' : 'text-gray-500'}>
+                {feature.enterprise ? (
+                  <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                ) : (
+                  <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                )}
+              </span>
+            ) : (
+              <span class="text-gray-300">{feature.enterprise}</span>
+            )}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  /* Add smooth hover effect for rows */
+  tr {
+    transition: background-color 0.2s ease;
+  }
+  
+  /* Style for checkmark and x icons */
+  svg {
+    transition: transform 0.2s ease;
+  }
+  
+  tr:hover svg {
+    transform: scale(1.1);
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ui\IntegrationIcon.astro
+================================================================================
+
+---
+interface Props {
+  name: string;
+  icon: string;
+  description: string;
+}
+
+const { name, icon, description } = Astro.props;
+---
+
+<div class="integration-icon group p-4 rounded-lg bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+  <div class="flex items-center space-x-3">
+    <div class="w-10 h-10 flex items-center justify-center text-2xl text-blue-400 group-hover:text-blue-300 transition-colors">
+      <i class={icon}></i>
+    </div>
+    <div>
+      <div class="text-white font-medium">{name}</div>
+      <div class="text-sm text-gray-400">{description}</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .integration-icon {
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+  }
+
+  .integration-icon:hover {
+    transform: translateY(-4px);
+  }
+
+  .integration-icon i {
+    transition: transform 0.3s ease;
+  }
+
+  .integration-icon:hover i {
+    transform: scale(1.1);
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ui\MagneticButton.astro
+================================================================================
+
+---
+---
+
+<div class="magnetic-button inline-block">
+  <slot />
+</div>
+
+<script>
+  class MagneticButton {
+    element: HTMLElement;
+    
+    constructor(element: HTMLElement) {
+      this.element = element;
+      this.attachEvents();
+    }
+
+    attachEvents() {
+      this.element.addEventListener('mousemove', this.handleMouseMove.bind(this));
+      this.element.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+    }
+
+    handleMouseMove(e: MouseEvent) {
+      const rect = this.element.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const distance = 15;
+      const x = ((e.clientX - centerX) / rect.width) * distance;
+      const y = ((e.clientY - centerY) / rect.height) * distance;
+
+      this.element.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    handleMouseLeave() {
+      this.element.style.transform = 'translate(0, 0)';
+    }
+  }
+
+  // Initialize all magnetic buttons
+  document.querySelectorAll('.magnetic-button').forEach(button => {
+    new MagneticButton(button as HTMLElement);
+  });
+</script>
+
+<style>
+  .magnetic-button {
+    transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ui\PricingCard.astro
+================================================================================
+
+---
+interface Feature {
+  name: string;
+  included: boolean;
+  description?: string;
+}
+
+interface Props {
+  name: string;
+  price: string;
+  description: string;
+  features: Feature[];
+  isPopular?: boolean;
+  ctaText?: string;
+  ctaLink?: string;
+}
+
+const {
+  name,
+  price,
+  description,
+  features,
+  isPopular = false,
+  ctaText = "Get Started",
+  ctaLink = "#"
+} = Astro.props;
+---
+
+<div class={`relative p-8 rounded-xl ${isPopular ? 'bg-blue-600/20 border-2 border-blue-400/20' : 'bg-white/5'} backdrop-blur-sm`}>
+  {isPopular && (
+    <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+      <span class="px-4 py-1 bg-blue-500 text-white text-sm font-medium rounded-full">
+        Most Popular
+      </span>
+    </div>
+  )}
+  
+  <div class="text-center mb-8">
+    <h3 class="text-2xl font-bold text-white mb-2">{name}</h3>
+    <div class="text-4xl font-bold text-white mb-4">
+      {price}
+    </div>
+    <p class="text-gray-300">{description}</p>
+  </div>
+  
+  <ul class="space-y-4 mb-8">
+    {features.map(feature => (
+      <li class="flex items-start">
+        <span class={`mt-1 mr-2 ${feature.included ? 'text-green-400' : 'text-gray-500'}`}>
+          {feature.included ? (
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          ) : (
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          )}
+        </span>
+        <div>
+          <div class="text-gray-200">{feature.name}</div>
+          {feature.description && (
+            <div class="text-sm text-gray-400">{feature.description}</div>
+          )}
+        </div>
+      </li>
+    ))}
+  </ul>
+  
+  <a
+    href={ctaLink}
+    class={`block w-full py-3 px-6 text-center rounded-lg font-semibold transition-all duration-200 ${
+      isPopular
+        ? 'bg-blue-500 text-white hover:bg-blue-600'
+        : 'bg-white/10 text-white hover:bg-white/20'
+    }`}
+  >
+    {ctaText}
+  </a>
+</div>
+
+<style>
+  .pricing-card {
+    transition: transform 0.3s ease;
+  }
+  
+  .pricing-card:hover {
+    transform: translateY(-8px);
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ui\ROICalculator.astro
+================================================================================
+
+---
+---
+
+<div class="p-8 rounded-xl bg-white/5 backdrop-blur-sm">
+  <h3 class="text-2xl font-bold text-white mb-6 text-center">Calculate Your Savings</h3>
+  
+  <form id="roi-calculator" class="space-y-6">
+    <div>
+      <label class="block text-gray-300 mb-2">Number of Employees</label>
+      <input
+        type="range"
+        min="10"
+        max="1000"
+        step="10"
+        value="100"
+        class="w-full"
+        id="employees"
+      />
+      <div class="flex justify-between text-sm text-gray-400">
+        <span>10</span>
+        <span id="employees-value">100</span>
+        <span>1000</span>
+      </div>
+    </div>
+    
+    <div>
+      <label class="block text-gray-300 mb-2">Average Monthly Travel Spend per Employee ($)</label>
+      <input
+        type="range"
+        min="100"
+        max="5000"
+        step="100"
+        value="1000"
+        class="w-full"
+        id="spend"
+      />
+      <div class="flex justify-between text-sm text-gray-400">
+        <span>$100</span>
+        <span id="spend-value">$1,000</span>
+        <span>$5,000</span>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-blue-600/20 rounded-lg">
+      <div class="text-center">
+        <div class="text-gray-300 mb-2">Estimated Annual Savings</div>
+        <div class="text-4xl font-bold text-white" id="savings">$36,000</div>
+        <div class="text-sm text-gray-400 mt-2">Based on average customer savings of 30%</div>
+      </div>
+    </div>
+    
+    <div class="text-center">
+      <a
+        href="#"
+        class="inline-block px-8 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+      >
+        Get Your Custom ROI Analysis
+      </a>
+    </div>
+  </form>
+</div>
+
+<script>
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0
+  });
+
+  function calculateSavings() {
+    const employees = parseInt(document.getElementById('employees').value);
+    const spend = parseInt(document.getElementById('spend').value);
+    const annualSpend = employees * spend * 12;
+    const savings = annualSpend * 0.3; // 30% savings
+    
+    document.getElementById('employees-value').textContent = employees;
+    document.getElementById('spend-value').textContent = formatter.format(spend);
+    document.getElementById('savings').textContent = formatter.format(savings);
+  }
+
+  // Add event listeners
+  document.getElementById('employees').addEventListener('input', calculateSavings);
+  document.getElementById('spend').addEventListener('input', calculateSavings);
+  
+  // Initialize
+  calculateSavings();
+</script>
+
+<style>
+  input[type="range"] {
+    -webkit-appearance: none;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #3b82f6;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    background: #2563eb;
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\components\ui\TestimonialCard.astro
+================================================================================
+
+---
+interface Props {
+  quote: string;
+  author: string;
+  role: string;
+  company: string;
+  image?: string;
+}
+
+const { quote, author, role, company, image } = Astro.props;
+---
+
+<div class="p-6 rounded-xl bg-white/5 backdrop-blur-sm">
+  <div class="flex items-center mb-6">
+    {image ? (
+      <img src={image} alt={author} class="w-12 h-12 rounded-full mr-4" />
+    ) : (
+      <div class="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center mr-4">
+        <span class="text-xl text-blue-400">{author[0]}</span>
+      </div>
+    )}
+    <div>
+      <div class="text-white font-semibold">{author}</div>
+      <div class="text-sm text-gray-400">{role} at {company}</div>
+    </div>
+  </div>
+  <blockquote class="text-gray-300 italic">"{quote}"</blockquote>
+</div>
+
+<style>
+  blockquote {
+    position: relative;
+    line-height: 1.6;
+  }
+  
+  blockquote::before,
+  blockquote::after {
+    content: '"';
+    font-size: 2em;
+    color: rgba(59, 130, 246, 0.2);
+  }
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\layouts\Layout.astro
+================================================================================
+
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Navan - Simplify Your Business Travel Management" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/png" href="/Navan-Icon.png" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style is:global>
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
+</style>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\pages\index.astro
+================================================================================
+
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Features from '../components/Features.astro';
+import Benefits from '../components/Benefits.astro';
+import FeatureComparison from '../components/FeatureComparison.astro';
+import Pricing from '../components/Pricing.astro';
+import ROICalculator from '../components/ROICalculator.astro';
+import Integrations from '../components/Integrations.astro';
+import CTA from '../components/CTA.astro';
+import Footer from '../components/Footer.astro';
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout title="Navan - Business Travel Management Platform">
+  <Header />
+  <main>
+    <Hero />
+    <Features />
+    <Benefits />
+    <FeatureComparison />
+    <Pricing />
+    <ROICalculator />
+    <Integrations />
+    <CTA />
+  </main>
+  <Footer />
+</Layout>
+
+
+================================================================================
+FILE: c:\personal\LandingPage Affialte SEO\final_2\navan\astroNavan\src\pages\privacy-policy.astro
+================================================================================
+
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Privacy Policy - Navan Travel">
+  <main class="container mx-auto px-6 py-16 mt-20">
+    <h1 class="text-4xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
+    
+    <div class="prose max-w-none">
+      <p class="mb-6">Last updated: February 13, 2025</p>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">1. Introduction</h2>
+        <p>Welcome to Navan Travel. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.</p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">2. Information We Collect</h2>
+        <p>We may collect, use, store and transfer different kinds of personal data about you which we have grouped together as follows:</p>
+        <ul class="list-disc ml-6 mt-2">
+          <li>Identity Data: includes first name, last name, username or similar identifier</li>
+          <li>Contact Data: includes email address and telephone numbers</li>
+          <li>Technical Data: includes internet protocol (IP) address, browser type and version, time zone setting and location</li>
+          <li>Usage Data: includes information about how you use our website and services</li>
+        </ul>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">3. How We Use Your Information</h2>
+        <p>We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:</p>
+        <ul class="list-disc ml-6 mt-2">
+          <li>To provide and maintain our service</li>
+          <li>To notify you about changes to our service</li>
+          <li>To provide customer support</li>
+          <li>To gather analysis or valuable information so that we can improve our service</li>
+        </ul>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">4. Data Security</h2>
+        <p>We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way, altered, or disclosed.</p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">5. Your Legal Rights</h2>
+        <p>Under certain circumstances, you have rights under data protection laws in relation to your personal data, including the right to:</p>
+        <ul class="list-disc ml-6 mt-2">
+          <li>Request access to your personal data</li>
+          <li>Request correction of your personal data</li>
+          <li>Request erasure of your personal data</li>
+          <li>Object to processing of your personal data</li>
+          <li>Request restriction of processing your personal data</li>
+          <li>Request transfer of your personal data</li>
+          <li>Right to withdraw consent</li>
+        </ul>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">6. Contact Us</h2>
+        <p>If you have any questions about this privacy policy or our privacy practices, please contact us.</p>
+      </section>
+    </div>
+  </main>
+</Layout>
+

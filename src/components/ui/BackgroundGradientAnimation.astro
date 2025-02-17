@@ -1,0 +1,87 @@
+---
+---
+
+<canvas id="gradient-canvas" class="absolute inset-0 w-full h-full z-[-1] opacity-40"></canvas>
+
+<script>
+  class GradientAnimation {
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+    private width: number;
+    private height: number;
+    private gradient: CanvasGradient;
+    private particles: Array<{x: number; y: number; speed: number; size: number}>;
+
+    constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+      this.canvas = canvas;
+      this.ctx = ctx;
+      this.width = canvas.width;
+      this.height = canvas.height;
+      
+      // Create gradient
+      this.gradient = ctx.createLinearGradient(0, 0, this.width, this.height);
+      this.gradient.addColorStop(0, '#1a365d');
+      this.gradient.addColorStop(0.5, '#2563eb');
+      this.gradient.addColorStop(1, '#1e40af');
+
+      // Create particles
+      this.particles = Array.from({ length: 50 }, () => ({
+        x: Math.random() * this.width,
+        y: Math.random() * this.height,
+        speed: 0.5 + Math.random() * 1,
+        size: 2 + Math.random() * 3
+      }));
+    }
+
+    animate = () => {
+      // Clear and fill background
+      this.ctx.fillStyle = this.gradient;
+      this.ctx.fillRect(0, 0, this.width, this.height);
+
+      // Update and draw particles
+      this.particles.forEach(particle => {
+        particle.y -= particle.speed;
+        if (particle.y < -10) {
+          particle.y = this.height + 10;
+          particle.x = Math.random() * this.width;
+        }
+
+        this.ctx.beginPath();
+        this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        this.ctx.fill();
+      });
+
+      requestAnimationFrame(this.animate);
+    }
+  }
+
+  function initGradientAnimation() {
+    const canvas = document.getElementById('gradient-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const container = canvas.parentElement;
+    if (!container) return;
+
+    // Set canvas dimensions
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+
+    // Create and start animation
+    const animation = new GradientAnimation(canvas, ctx);
+    animation.animate();
+  }
+
+  // Initialize on load
+  window.addEventListener('load', initGradientAnimation);
+
+  // Handle resize with debounce
+  let resizeTimeout: number;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(initGradientAnimation, 250);
+  });
+</script>

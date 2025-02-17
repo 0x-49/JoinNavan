@@ -1,0 +1,40 @@
+---
+interface Props {
+  name: string;
+  icon: string;
+  description: string;
+}
+
+const { name, icon, description } = Astro.props;
+---
+
+<div class="integration-icon group p-4 rounded-lg bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+  <div class="flex items-center space-x-3">
+    <div class="w-10 h-10 flex items-center justify-center text-2xl text-blue-400 group-hover:text-blue-300 transition-colors">
+      <i class={icon}></i>
+    </div>
+    <div>
+      <div class="text-white font-medium">{name}</div>
+      <div class="text-sm text-gray-400">{description}</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .integration-icon {
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+  }
+
+  .integration-icon:hover {
+    transform: translateY(-4px);
+  }
+
+  .integration-icon i {
+    transition: transform 0.3s ease;
+  }
+
+  .integration-icon:hover i {
+    transform: scale(1.1);
+  }
+</style>
